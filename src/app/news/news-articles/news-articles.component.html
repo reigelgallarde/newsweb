@@ -1,0 +1,48 @@
+
+<form (ngSubmit)="onSearch(searchForm)" #searchForm="ngForm">
+  <div class="input-group mb-3 mt-2">
+    <input type="text" class="form-control" name="q" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" ngModel>
+    <div class="input-group-append">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </div>
+  </div>
+</form>
+
+<app-loader [isLoading]="isLoading"></app-loader>
+<p *ngIf="totalResults > 1">There are {{ totalResults }} total articles. Currently viewing page {{ currentPage }}.</p>
+<p *ngIf="totalResults < 1">Found 1 article.</p>
+<div *ngIf="!isLoading" class="card-columns" >
+  <div class="card" *ngFor="let article of articles">
+    <img [src]="article.urlToImage" class="card-img-top" [alt]="article.title">
+    <div class="card-body">
+      <h5 class="card-title">
+        <a target="_blank" [href]="article.url">{{ article.title }}</a></h5>
+      <p class="card-text">{{ article.description }}</p>
+      <p class="card-text"><small class="text-muted">{{ article.source.name }}, {{ article.author }}</small></p>
+    </div>
+  </div>
+</div>
+
+<nav *ngIf="!isLoading" aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <li class="page-item " [class.disabled]="prev == -1">
+        <a class="page-link" href="#" (click)="onPaginate(currentPage - 1)" [tabindex]="prev" [attr.aria-disabled]="prev == -1">Previous</a>
+      </li>
+      <li *ngFor="let page of [].constructor(pages); let i = index;"
+        class="page-item"
+        [class.active]="currentPage == i + 1"
+        [attr.aria-current.page]="currentPage == i + 1">
+        <a *ngIf="currentPage != i + 1" class="page-link"  href="#" (click)="onPaginate(i+1)">
+          {{ i+1 }}
+        </a>
+        <span *ngIf="currentPage == i + 1" class="page-link">
+            {{ i+1 }}
+            <span class="sr-only">(current)</span>
+          </span>
+      </li>
+      <li class="page-item" [class.disabled]="next == -1">
+        <a class="page-link" href="#" (click)="onPaginate(currentPage + 1)" [tabindex]="next" [attr.aria-disabled]="next == -1">Next</a>
+      </li>
+    </ul>
+  </nav>
+
